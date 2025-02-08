@@ -40,7 +40,7 @@ def reload_kitty():
 
 
 def reload_konsole(
-    # change_colors_to: str,
+    change_colors_to: str,
     main_profile: str,
     dummy_profile: str = "dummy",
     delay: float = 0.05,

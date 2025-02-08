@@ -18,24 +18,9 @@ from window_managers.dwm import Dwm
 from window_managers.hyprland import Hyprland
 
 
-def apply_colorscheme(menu: str, wm: str) -> None:
-    with open(
-        Path(f"~/.config/menu_agnostic__utilities/{wm}/wallpapers.json").expanduser()
-    ) as file:
-        wallpaper_dict = json.load(file)
-
-    colorschemes: dict[str, str] = {
-        "[cancel]": "[  Cancel ]",
-        "catppuccin_macchiato": " Catppuccin (Macchiato)",
-        "dracula": " Dracula",
-        "everblush": " Everblush",
-        "everforest": " Everforest",
-        "gruvbox": " Gruvbox",
-        "matugen": " Matugen (Material-You Color Generator)",
-        "nord": " Nord",
-        "rose_pine": " Rose Pine",
-    }
-
+def setup_wm(
+    menu: str, wm: str, wallpaper_dict: dict, colorschemes: dict
+) -> Dwm | Hyprland:
     if menu == "dmenu":
         menu_obj = Dmenu(
             width=600,
@@ -65,6 +50,29 @@ def apply_colorscheme(menu: str, wm: str) -> None:
     else:
         sys.exit(f"Window manager - '{wm}' is not recognized!\n")
 
+    return wm_obj
+
+
+def apply_colorscheme(menu: str, wm: str) -> None:
+    with open(
+        Path(f"~/.config/menu_agnostic__utilities/{wm}/wallpapers.json").expanduser()
+    ) as file:
+        wallpaper_dict = json.load(file)
+
+    colorschemes: dict[str, str] = {
+        "[cancel]": "[  Cancel ]",
+        "catppuccin_macchiato": " Catppuccin (Macchiato)",
+        "dracula": " Dracula",
+        "everblush": " Everblush",
+        "everforest": " Everforest",
+        "gruvbox": " Gruvbox",
+        "matugen": " Matugen (Material-You Color Generator)",
+        "nord": " Nord",
+        "rose_pine": " Rose Pine",
+    }
+
+    wm_obj = setup_wm(menu, wm, wallpaper_dict, colorschemes)
+
     wm_obj.apply(choose_wallpaper=True)
 
 
@@ -73,6 +81,7 @@ def main():
     menus = ["dmenu", "fuzzel"]
 
     arg_parser = ArgumentParser(description="change colorscheme")
+
     # define necessary cli arguments
     arg_parser.add_argument(
         "-m",

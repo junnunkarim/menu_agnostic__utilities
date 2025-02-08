@@ -98,9 +98,6 @@ class WindowManager:
         manage_programs: dict[str, ProgramColor],
         allowed_programs: dict = {},
     ) -> None:
-        if colorscheme.startswith("[") and colorscheme.endswith("]"):
-            sys.exit(f"'cancel' was chosen when prompted for choosing a colorscheme.\n")
-
         # set colorscheme for all selected programs
         if colorscheme in allowed_programs:
             program_list = allowed_programs[colorscheme]
@@ -150,6 +147,9 @@ class WindowManager:
     ) -> None:
         colorscheme = self.choose_colorscheme()
 
+        if colorscheme.startswith("[") and colorscheme.endswith("]"):
+            sys.exit(f"'cancel' was chosen when prompted for choosing a colorscheme.\n")
+
         wallpaper = self.apply_wallpaper(
             colorscheme,
             choose_wallpaper,
@@ -164,17 +164,14 @@ class WindowManager:
 
         # repload programs
         for func, args in reload_programs.items():
-            if not args:
-                func()
-            else:
-                params = []
+            params = []
 
-                if args["replace"]:
-                    if "colorscheme" in args["replace"]:
-                        params.append(colorscheme)
+            if "replace" in args:
+                if "colorscheme" in args["replace"]:
+                    params.append(colorscheme)
 
-                if args["params"]:
-                    for param in args["params"]:
-                        params.append(param)
+            if "params" in args:
+                for param in args["params"]:
+                    params.append(param)
 
-                func(*params)
+            func(*params)
