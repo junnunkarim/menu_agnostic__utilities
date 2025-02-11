@@ -10,8 +10,8 @@ from subprocess import run
 # enables importing from parent directories
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-from menus.dmenu import Dmenu
-from menus.fuzzel import Fuzzel
+from main_classes.menus.dmenu import Dmenu
+from main_classes.menus.fuzzel import Fuzzel
 
 
 # ----------------

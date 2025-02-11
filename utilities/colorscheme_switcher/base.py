@@ -11,11 +11,12 @@ from pathlib import Path
 # enables importing from parent directories
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-from menus.dmenu import Dmenu
-from menus.fuzzel import Fuzzel
+from main_classes.menus.dmenu import Dmenu
+from main_classes.menus.fuzzel import Fuzzel
+from main_classes.menus.rofi import Rofi
 
-from window_managers.dwm import Dwm
-from window_managers.hyprland import Hyprland
+from main_classes.window_managers.dwm import Dwm
+from main_classes.window_managers.hyprland import Hyprland
 
 
 def setup_wm(
