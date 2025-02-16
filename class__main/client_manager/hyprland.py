@@ -15,12 +15,11 @@ class HyprClientManager:
     menu: Menu
     clients_info: list = []
     selected_client_dict: dict = {}
+    only_minimize: bool = False
 
-    def __init__(
-        self,
-        menu: Menu,
-    ) -> None:
+    def __init__(self, menu: Menu, only_minimize: bool) -> None:
         self.menu = menu
+        self.only_minimize = only_minimize
 
     def _format_client(self, client):
         title = client.get("title", "").strip()
@@ -72,8 +71,7 @@ class HyprClientManager:
             f"notify 2 3000 0 fontsize:25 Minimized Client '{self.selected_client_dict['title']}'"
         )
 
-        output = run(["hyprctl", "--batch", batch_command], capture_output=True)
-        print(output)
+        run(["hyprctl", "--batch", batch_command], capture_output=True)
 
     def close_client(self, forcekill: bool = False):
         if self.selected_client_dict:
@@ -137,4 +135,7 @@ class HyprClientManager:
         )
         self.selected_client_dict = selected_client_dict
 
-        self.show_options()
+        if self.only_minimize:
+            self.minimize_client()
+        else:
+            self.show_options()
