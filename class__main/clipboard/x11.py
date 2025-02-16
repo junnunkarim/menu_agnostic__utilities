@@ -6,7 +6,7 @@ from subprocess import run, check_output
 # enables importing from parent directories
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from base_classes.clipboard.base import Clipboard
+from class__base.clipboard.base import Clipboard
 
 
 class ClipboardX11(Clipboard):

@@ -118,7 +118,7 @@ class WindowManager:
         # choose a wallpaper
         if choose_wallpaper:
             selection = self.menu.get_confirmation(
-                question="Do you want to choose a wallpaper?",
+                question="Choose a wallpaper? ",
                 positive=" Yes",
                 negative=" No (random wallpaper choosen)",
             )
@@ -147,7 +147,9 @@ class WindowManager:
     ) -> None:
         colorscheme = self.choose_colorscheme()
 
-        if colorscheme.startswith("[") and colorscheme.endswith("]"):
+        if not colorscheme:
+            sys.exit()
+        elif colorscheme.startswith("[") and colorscheme.endswith("]"):
             sys.exit(f"'cancel' was chosen when prompted for choosing a colorscheme.\n")
 
         wallpaper = self.apply_wallpaper(

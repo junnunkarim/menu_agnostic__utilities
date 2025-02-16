@@ -18,6 +18,9 @@ UTILITY_SCRIPTS = {
     "clipboard": Path(
         "~/.bin/menu_agnostic__utilities/utilities/clipboard/base.py"
     ).expanduser(),
+    "manage_clients": Path(
+        "~/.bin/menu_agnostic__utilities/utilities/client_manager/base.py"
+    ).expanduser(),
     "show_keybindings": Path(
         "~/.bin/menu_agnostic__utilities/utilities/show_keybindings/base.py"
     ).expanduser(),

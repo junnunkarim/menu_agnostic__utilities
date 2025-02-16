@@ -9,8 +9,8 @@ from argparse import ArgumentParser
 # enables importing from parent directories
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-from main_classes.clipboard.x11 import ClipboardX11
-from main_classes.clipboard.wayland import ClipboardWayland
+from class__main.clipboard.x11 import ClipboardX11
+from class__main.clipboard.wayland import ClipboardWayland
 
 
 # --------------

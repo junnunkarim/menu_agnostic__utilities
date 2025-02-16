@@ -4,11 +4,11 @@ import sys
 # enables importing from parent directories
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from base_classes.menu.base import Menu
+from class__base.menu.base import Menu
 
-from main_classes.menus.dmenu import Dmenu
-from main_classes.menus.fuzzel import Fuzzel
-from main_classes.menus.rofi import Rofi
+from class__main.menus.dmenu import Dmenu
+from class__main.menus.fuzzel import Fuzzel
+from class__main.menus.rofi import Rofi
 
 
 class Clipboard:

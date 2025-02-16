@@ -4,7 +4,7 @@ import os
 # enables importing from parent directories
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from base_classes.menu.base import Menu
+from class__base.menu.base import Menu
 
 
 class Rofi(Menu):

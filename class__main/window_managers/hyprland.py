@@ -7,15 +7,15 @@ from pathlib import Path
 # enables importing from parent directories
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from base_classes.window_manager.base import WindowManager
-from base_classes.menu.base import Menu
-from base_classes.program_color.base import ProgramColor
+from class__base.window_manager.base import WindowManager
+from class__base.menu.base import Menu
+from class__base.program_color.base import ProgramColor
 
 from helpers.colorscheme import matugen_gen_color
 from helpers.reload_function import reload_dwm, reload_kitty, reload_konsole
 
 
-class Dwm(WindowManager):
+class Hyprland(WindowManager):
     manage_programs: dict[str, ProgramColor]
 
     def __init__(
@@ -26,12 +26,6 @@ class Dwm(WindowManager):
     ) -> None:
         # programs with universally defined location
         # ------------------------------------------
-        alacritty = ProgramColor(
-            file="~/.config/alacritty/colors.toml",
-            start_concat='import = ["~/.config/alacritty/colorschemes/',
-            end_concat='.toml"]',
-        )
-
         btop = ProgramColor(
             file="~/.config/btop/btop.conf",
             start_concat='color_theme = "',
@@ -47,22 +41,25 @@ class Dwm(WindowManager):
                 "rose_pine": "rose_pine",
             },
         )
-
-        gtk_colorscheme_map = {
-            "catppuccin_macchiato": "catppuccin_macchiato",
-            "dracula": "dracula",
-            "everblush": "everblush",
-            "everforest": "everforest",
-            "gruvbox": "gruvbox",
-            "matugen": "materia",
-            "nord": "nord",
-            "rose_pine": "rose_pine",
-        }
+        fuzzel = ProgramColor(
+            file="~/.config/fuzzel/fuzzel.ini",
+            start_concat="include=~/.config/fuzzel/colors/",
+            end_concat=".ini",
+        )
         gtk = ProgramColor(
             file="~/.config/gtk-3.0/settings.ini",
             start_concat="gtk-theme-name=",
             end_concat="",
-            colorscheme_map=gtk_colorscheme_map,
+            colorscheme_map={
+                "catppuccin_macchiato": "catppuccin_macchiato",
+                "dracula": "dracula",
+                "everblush": "everblush",
+                "everforest": "everforest",
+                "gruvbox": "gruvbox",
+                "matugen": "adw-gtk3",
+                "nord": "nord",
+                "rose_pine": "rose_pine",
+            },
         )
         helix = ProgramColor(
             file="~/.config/helix/config.toml",
@@ -83,26 +80,25 @@ class Dwm(WindowManager):
             file="~/.config/zathura/zathurarc",
             start_concat="include colorschemes/",
             end_concat="",
+            colorscheme_map={
+                "catppuccin_macchiato": "catppuccin_macchiato",
+                "dracula": "dracula",
+                "everblush": "everblush",
+                "everforest": "everforest",
+                "gruvbox": "gruvbox",
+                "matugen": "matugen",
+                "nord": "nord",
+                "rose_pine": "rose_pine",
+            },
         )
 
         # programs with user defined location
         # -----------------------------------
-        dwm = ProgramColor(
-            file="~/.Xresources",
-            start_concat='#include ".config/dwm/xcolors_dwm/',
+        hyprland = ProgramColor(
+            file="~/.config/hypr/external_configs/ags_v1/user_options.json",
+            start_concat='  "colorscheme": "',
             end_concat='"',
         )
-        dmenu = ProgramColor(
-            file="~/.Xresources",
-            start_concat='#include ".config/dmenu/xcolors_dmenu/',
-            end_concat='"',
-        )
-        luastatus = ProgramColor(
-            file="~/.config/dwm/luastatus/colorscheme/color.lua",
-            start_concat='local color = require("',
-            end_concat='")',
-        )
-
         nvim = ProgramColor(
             file="~/.config/nvim/lua/core/colorscheme.lua",
             start_concat='local color = "',
@@ -113,36 +109,31 @@ class Dwm(WindowManager):
                 "everblush": "everblush",
                 "everforest": "base16-everforest",
                 "gruvbox": "base16-gruvbox-dark-medium",
-                "matugen": "base16-default-dark",
+                "matugen": "matugen",
                 "nord": "base16-nord",
                 "rose_pine": "base16-rose-pine",
             },
         )
-        # rofi = ProgramColor(
-        #     file="~/.config/dwm/external_configs/rofi/colors.rasi",
-        #     start_concat=(
-        #         f'@import "~/.config/dwm/external_configs/rofi/colorschemes/'
-        #     ),
-        #     end_concat='.rasi"',
-        # )
 
         manage_programs = {
-            "alacritty": alacritty,
             "btop": btop,
+            "fuzzel": fuzzel,
             "gtk": gtk,
             "helix": helix,
+            "hyprland": hyprland,
             "kitty": kitty,
             "konsole": konsole,
-            "zathura": zathura,
-            "dwm": dwm,
-            "dmenu": dmenu,
-            "luastatus": luastatus,
             "nvim": nvim,
+            "zathura": zathura,
         }
 
         self.manage_programs = manage_programs
 
         super().__init__(menu, wallpaper_dict, colorscheme_dict)
+
+    # ------------------------------------
+    # functions for hot reloading programs
+    # ------------------------------------
 
     # -----------------------------------
     # functions for applying stuffs
@@ -154,9 +145,11 @@ class Dwm(WindowManager):
         self,
         wallpaper: str,
     ) -> None:
-        wallpaper_path = Path("~/.config/wallpaper/" + wallpaper).expanduser()
-
-        command = ["feh", "--bg-fill", wallpaper_path]
+        command = [
+            f"{Path('~/.config/hypr/scripts/change_wallpaper.py').expanduser()}",
+            "--wallpaper",
+            wallpaper,
+        ]
 
         Popen(command, start_new_session=True)
 
@@ -164,14 +157,39 @@ class Dwm(WindowManager):
         self,
         wallpaper: str,
     ) -> None:
-        wallpaper_path = Path("~/.config/wallpaper/" + wallpaper).expanduser()
+        lock_wall = ProgramColor(
+            file="~/.config/hypr/hyprlock.conf",
+            start_concat="$lockscreen_wall = ",
+            end_concat="",
+        )
+        wallpaper_path = "~/.config/wallpaper/" + wallpaper
 
-        command = ["betterlockscreen", "--fx", " ", "-u", wallpaper_path]
-
-        Popen(command, start_new_session=True)
+        lock_wall.apply(wallpaper_path)
 
     # for applying colorscheme
     # ------------------------
+    def apply_gtk_theme_wayland(self, colorscheme: str):
+        gtk_colorscheme_map = {
+            "catppuccin_macchiato": "catppuccin_macchiato",
+            "dracula": "dracula",
+            "everblush": "everblush",
+            "everforest": "everforest",
+            "gruvbox": "gruvbox",
+            "matugen": "adw-gtk3",
+            "nord": "nord",
+            "rose_pine": "rose_pine",
+        }
+
+        command = [
+            "gsettings",
+            "set",
+            "org.gnome.desktop.interface",
+            "gtk-theme",
+            gtk_colorscheme_map[colorscheme],
+        ]
+
+        Popen(command, start_new_session=True)
+
     def apply(
         self,
         choose_wallpaper=False,
@@ -179,12 +197,14 @@ class Dwm(WindowManager):
         allowed_programs = {
             "matugen": [
                 "btop",
-                "dwm",
-                "dmenu",
+                "fuzzel",
                 "gtk",
+                "hyprland",
                 "luastatus",
                 "kitty",
+                "konsole",
                 "nvim",
+                "zathura",
             ],
         }
 
@@ -194,6 +214,7 @@ class Dwm(WindowManager):
         ]
 
         reload_programs = {
+            self.apply_gtk_theme_wayland: {"replace": ["colorscheme"], "params": []},
             reload_dwm: {},
             reload_kitty: {},
             reload_konsole: {"replace": ["colorscheme"], "params": ["main"]},

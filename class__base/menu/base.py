@@ -50,8 +50,8 @@ class Menu:
     def get_confirmation(
         self,
         question: str = "Are you sure? ",
-        positive: str = " Yes",
-        negative: str = " No",
+        positive: str = " Yes",
+        negative: str = " No",
     ) -> bool:
         entries: str = f"{positive}\n{negative}"
 
@@ -80,7 +80,7 @@ class Menu:
     def show_message(
         self,
         entries: str,
-        prompt_name: str = "Error:",
+        prompt_name: str = "Error: ",
     ) -> None:
         self.get_selection(
             entries=entries,

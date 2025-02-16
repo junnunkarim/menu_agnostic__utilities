@@ -9,10 +9,10 @@ import pathlib
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 
-from main_classes.menus.dmenu import Dmenu
-from main_classes.menus.fuzzel import Fuzzel
+from class__main.menus.dmenu import Dmenu
+from class__main.menus.fuzzel import Fuzzel
 
-from base_classes.buku.base import BukuMenu
+from class__main.buku.base import BukuMenu
 
 
 def buku(

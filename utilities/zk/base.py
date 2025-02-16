@@ -8,10 +8,10 @@ import pathlib
 # enables importing from parent directories
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-from main_classes.menus.dmenu import Dmenu
-from main_classes.menus.fuzzel import Fuzzel
+from class__main.menus.dmenu import Dmenu
+from class__main.menus.fuzzel import Fuzzel
 
-from base_classes.zk.base import ZkMenu
+from class__main.zk.base import ZkMenu
 
 
 def zk(
