@@ -115,7 +115,7 @@ class HyprClientManager:
 
         selection = self.menu.get_selection(
             entries="\n".join(client_list),
-            prompt_name="Clients ",
+            prompt_name=f"Clients ({len(self.clients_info)}) ",
         )
 
         match = re.search(r"\[(0x[0-9a-f]+)\]", selection, re.IGNORECASE)
