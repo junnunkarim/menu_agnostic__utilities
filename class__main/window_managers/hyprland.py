@@ -131,10 +131,6 @@ class Hyprland(WindowManager):
 
         super().__init__(menu, wallpaper_dict, colorscheme_dict)
 
-    # ------------------------------------
-    # functions for hot reloading programs
-    # ------------------------------------
-
     # -----------------------------------
     # functions for applying stuffs
     # -----------------------------------

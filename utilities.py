@@ -11,7 +11,9 @@ UTILITY_SCRIPTS = {
     "app_launcher": Path(
         "~/.bin/menu_agnostic__utilities/utilities/app_launcher/base.py"
     ).expanduser(),
-    "buku": Path("~/.bin/menu_agnostic__utilities/utilities/buku/base.py").expanduser(),
+    "bookmark_manager": Path(
+        "~/.bin/menu_agnostic__utilities/utilities/bookmark_manager/base.py"
+    ).expanduser(),
     "colorscheme_switcher": Path(
         "~/.bin/menu_agnostic__utilities/utilities/colorscheme_switcher/base.py"
     ).expanduser(),

@@ -10,6 +10,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 
 from class__base.menu.base import Menu
 
+from helpers.misc import copy_to_clipboard
+from helpers.strings import adjust_str
+
 
 class BukuMenu:
     def __init__(
@@ -17,7 +20,7 @@ class BukuMenu:
         menu: Menu,
         database_path: pathlib.Path | None = None,
         editor_cmd: str = "emacs",
-        attr_to_show: list[str] = ["id", "title", "tags"],
+        attr_to_show: list[str] = ["title", "tags"],
         max_str_len: int = 150,
         online_status: str = "online",
         return_str: str = " Return",
@@ -41,35 +44,10 @@ class BukuMenu:
         self._icon_tips = icon_tips
         self._icon_enter = icon_enter
 
-    def _copy_to_clipboard(self, text: str):
-        wayland = os.environ.get("WAYLAND_DISPLAY", None)
-
-        if wayland:
-            print(wayland)
-            command = ["wl-copy"]
-        else:
-            command = ["xclip", "-selection", "'clipboard'"]
-
-        subprocess.run(
-            command,
-            input=text,
-            encoding="utf-8",
-            start_new_session=True,
-        )
-
-    def _truncate_str(
-        self,
-        string: str,
-        max_limit: int,
-    ):
-        if len(string) > max_limit:
-            return string[: max_limit - 3] + "..."
-
-        return string
-
     def _format_output(
         self,
         id: str,
+        max_id: int,
         url: str | None = None,
         title: str | None = None,
         description: str | None = None,
@@ -79,61 +57,58 @@ class BukuMenu:
         if not id:
             sys.exit("Bookmark ID was not given!")
 
-        formatted_str = ""
-        separator = ""
-        for _ in range(sep_space_count):
-            separator += " "
+        separator = " " * sep_space_count
 
-        if id in self._attr_to_show:
-            attr_count = len(self._attr_to_show) - 1
-        else:
-            attr_count = len(self._attr_to_show)
+        attr_count = len(self._attr_to_show)
+        max_id_len = len(str(max_id))
 
-        max_id_len = len(str(self._buku.get_max_id()))
-        formatted_str += id.ljust(max_id_len, " ")
+        len_available = self._max_str_len - max_id_len - (len(separator) * attr_count)
+        max_attr_len = len_available // attr_count
 
-        max_attr_str_len = (
-            self._max_str_len - max_id_len - (attr_count * sep_space_count)
-        ) // attr_count
+        str_parts = [id.ljust(max_id_len, " ")]
 
-        # TODO: dynamically check if attr is the last element of the
-        # given list and if it is then don't use 'ljust' on it
-        if url and ("url" in self._attr_to_show):
-            url = self._truncate_str(url, max_attr_str_len)
-            formatted_str += separator + url.ljust(max_attr_str_len, " ")
+        for attr in self._attr_to_show:
+            if attr == "title" and title:
+                attr_str = title
+            elif attr == "url" and url:
+                attr_str = url
+            elif attr == "description" and description:
+                attr_str = description
+            elif attr == "tags" and tags:
+                attr_str = tags
+            else:
+                attr_str = " "
 
-        if title and ("title" in self._attr_to_show):
-            title = self._truncate_str(title, max_attr_str_len + 20)
-            formatted_str += separator + title.ljust(max_attr_str_len + 20, " ")
+            if attr is not self._attr_to_show[-1]:
+                adjusted_str = adjust_str(attr_str, max_attr_len)
+            else:
+                adjusted_str = attr_str
 
-        if description and ("description" in self._attr_to_show):
-            description = self._truncate_str(description, max_attr_str_len)
-            formatted_str += separator + description.ljust(max_attr_str_len, " ")
+            str_parts.append(separator + adjusted_str)
 
-        if tags and ("tags" in self._attr_to_show):
-            formatted_str += separator + tags
-
-        return formatted_str
+        return "".join(str_parts)
 
     def get_bookmarks(
         self,
         tags: str | None = None,
     ) -> str:
         if tags:
-            bookmark_list = self._buku.search_by_tag(tags=tags)
+            bookmarks = self._buku.search_by_tag(tags=tags)
         else:
-            bookmark_list = self._buku.get_rec_all()
+            bookmarks = self._buku.get_rec_all()
 
+        max_id = max(bookmark.id for bookmark in bookmarks)
         formatted_bookmarks = ""
 
-        for row in bookmark_list:
+        for bookmark in bookmarks:
             formatted_bookmarks += (
                 self._format_output(
-                    id=str(row.id),
-                    url=row.url,
-                    title=row.title,
-                    description=row.desc,
-                    tags=row.tags_raw.strip(","),
+                    id=str(bookmark.id),
+                    max_id=max_id,
+                    url=bookmark.url,
+                    title=bookmark.title,
+                    description=bookmark.desc,
+                    tags=bookmark.tags_raw.strip(","),
                 )
                 + "\n"
             )
@@ -154,7 +129,10 @@ class BukuMenu:
             buku_tags = self._buku.get_tag_all()[1]
             return "\n".join(f"{tag} ({count})" for tag, count in buku_tags.items())
 
-    def open_bookmark(self, id) -> None:
+    def open_bookmark(self, selection: str) -> None:
+        # get the id from the selected bookmark string
+        id = int(selection.split(" ")[0])
+
         command = ["buku", "--nostdin", "--nc", "--np", "--tacit", "-o", str(id)]
 
         subprocess.run(command, start_new_session=True)
@@ -168,7 +146,7 @@ class BukuMenu:
             prompt_name=prompt_name,
         )
 
-    def add_edit_bookmark(
+    def add_bookmark(
         self,
         mode: str = "add",
         id: int | None = None,
@@ -259,7 +237,7 @@ class BukuMenu:
             # url
             elif selection == entry_add_url:
                 if url:
-                    self._copy_to_clipboard(url)
+                    copy_to_clipboard(url)
 
                 input = self._menu.get_selection(
                     entries=f"{self._return_str}\n",
@@ -272,7 +250,7 @@ class BukuMenu:
             # title
             elif selection == entry_add_title:
                 if title:
-                    self._copy_to_clipboard(title)
+                    copy_to_clipboard(title)
 
                 input = self._menu.get_selection(
                     entries=f"{self._return_str}\n",
@@ -285,7 +263,7 @@ class BukuMenu:
             # tags
             elif selection == entry_add_tags:
                 if tags:
-                    self._copy_to_clipboard(tags.strip(","))
+                    copy_to_clipboard(tags.strip(","))
 
                 input = self._menu.get_selection(
                     entries=f"{self._return_str}\n",
@@ -302,7 +280,7 @@ class BukuMenu:
             # description
             elif selection == entry_add_desc:
                 if description:
-                    self._copy_to_clipboard(description)
+                    copy_to_clipboard(description)
 
                 input = self._menu.get_selection(
                     entries=f"{self._return_str}\n",
@@ -394,7 +372,7 @@ class BukuMenu:
                 bookmark_info = self._buku.get_rec_by_id(index=bookmark_id)
 
                 if bookmark_info:
-                    self.add_edit_bookmark(
+                    self.add_bookmark(
                         mode="edit",
                         id=bookmark_id,
                         url=str(bookmark_info.url),
@@ -461,7 +439,43 @@ class BukuMenu:
                 )
 
                 if not (selected_bookmark in menu_entries):
-                    bookmark_id = int(selected_bookmark.split(" ")[0])
+                    self.open_bookmark(selection=selected_bookmark)
 
-                    self.open_bookmark(id=bookmark_id)
                     return True
+
+    def run(self):
+        entry_new_bookmark = self._icon_menu + " add new bookmark "
+        entry_edit_bookmark = self._icon_menu + " edit bookmark "
+        entry_delete_bookmark = self._icon_menu + " delete bookmark "
+        entry_all_tags = self._icon_menu + " show all tags "
+
+        menu_entries = [
+            entry_new_bookmark,
+            entry_edit_bookmark,
+            entry_delete_bookmark,
+            entry_all_tags,
+            "",  # for adding an empty line
+        ]
+
+        while True:
+            selection = self.get_selection(
+                menu_entries=menu_entries,
+                prompt_name="Bookmarks: ",
+            )
+
+            if selection in menu_entries:
+                if selection == entry_new_bookmark:
+                    self.add_bookmark()
+                elif selection == entry_edit_bookmark:
+                    self.edit_bookmark()
+                elif selection == entry_delete_bookmark:
+                    self.delete_bookmark()
+                elif selection == entry_all_tags:
+                    status = self.show_tags()
+
+                    if status:
+                        break
+            elif not (selection in menu_entries):
+                self.open_bookmark(selection=selection)
+
+                break
