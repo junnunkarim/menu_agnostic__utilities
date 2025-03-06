@@ -20,7 +20,9 @@ class ProgramColor:
         file_path = Path(file).expanduser()
 
         if not file_path.is_file():
-            sys.exit(f"error: file path - '{file_path}' is not found!\n")
+            # sys.exit(f"error: file path - '{file_path}' is not found!\n")
+            print(f"error: file path - '{file_path}' is not found!\n")
+            return
 
         self.file_path = file_path
         self.start_concat = start_concat

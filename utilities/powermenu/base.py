@@ -28,8 +28,8 @@ def get_uptime() -> str:
         output.replace("up ", "")
         .replace("hours", "h")
         .replace("hour", "h")
-        .replace("minutes", "min")
-        .replace("minute", "min")
+        .replace("minutes", "m")
+        .replace("minute", "m")
     )
 
 

@@ -21,29 +21,43 @@ class HyprClientManager:
         self.menu = menu
         self.only_minimize = only_minimize
 
+    def _format_workspace_name(self, workspace_name: str, width: int) -> str:
+        if "special:" in workspace_name:
+            workspace_name = workspace_name.replace("special", "s").replace("s_", "")
+        else:
+            workspace_name = workspace_name
+
+        ws_len = len(workspace_name)
+
+        if ws_len > width:
+            return workspace_name[: width - 1]
+        else:
+            return workspace_name + (" " * (width - ws_len))
+
     def _format_client(self, client):
         title = client.get("title", "").strip()
-        client_class = client.get("class", "").strip()
+        # client_class = client.get("class", "").strip()
         address = client.get("address", "").strip()
-        workspace_name = client.get("workspace", {}).get("name", "")
+        workspace_name = client.get("workspace", {}).get("name", "null")
         fullscreen = client.get("fullscreen", 0)
         floating = client.get("floating", False)
 
         # Check for each state.
         # If the client is fullscreen, use "󰘖", else pad with a space.
         fullscreen_sym = "󰘖" if fullscreen == 2 else " "
-        # If the client is floating, use "", else pad with a space.
+        # If the client is floating, use "", else pad with a space.
         floating_sym = "" if floating else " "
         # For minimized, we check either a boolean or a substring in the workspace name.
-        minimized_sym = (
-            "-" if ("special:scratchpad_minimize" in workspace_name) else " "
-        )
+        minimized_sym = "-" if ("special:s_minimize" in workspace_name) else " "
 
         # Build the state string; always showing three comma-separated symbols.
-        state_str = f"{fullscreen_sym} {floating_sym} {minimized_sym}   "
+        state_str = f"{fullscreen_sym} {floating_sym} {minimized_sym}"
+
+        ws_name = self._format_workspace_name(workspace_name, 8)
 
         # construct the final formatted string
-        return f"{state_str} {title} [{client_class}] [{address}]"
+        # return f"{state_str} {title} [{client_class}] [{address}]"
+        return f"{state_str}    {ws_name}    {title} [{address}]"
 
     def fetch_client_info(self) -> None:
         clients_json = check_output(["hyprctl", "clients", "-j"], text=True)
@@ -67,7 +81,7 @@ class HyprClientManager:
 
     def minimize_client(self):
         batch_command = (
-            f"dispatch movetoworkspacesilent special:scratchpad_minimize,address:{self.selected_client_dict['address']} ; "
+            f"dispatch movetoworkspacesilent special:s_minimize,address:{self.selected_client_dict['address']} ; "
             f"notify 2 3000 0 fontsize:25 Minimized Client '{self.selected_client_dict['title']}'"
         )
 

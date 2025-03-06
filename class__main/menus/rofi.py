@@ -1,6 +1,8 @@
 import sys
 import os
 
+from pathlib import Path
+
 # enables importing from parent directories
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -21,6 +23,8 @@ class Rofi(Menu):
         main_prompt += [
             "-l",
             f"{line}",
+            "-config",
+            Path("~/.config/rofi/script_menu_1.rasi").expanduser(),
         ]
 
         super().__init__(main_prompt)

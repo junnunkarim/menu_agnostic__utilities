@@ -100,7 +100,7 @@ class Hyprland(WindowManager):
             end_concat='"',
         )
         nvim = ProgramColor(
-            file="~/.config/nvim/lua/core/colorscheme.lua",
+            file="~/.config/nvim/lua/config/colorscheme.lua",
             start_concat='local color = "',
             end_concat='"',
             colorscheme_map={

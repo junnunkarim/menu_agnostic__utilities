@@ -48,6 +48,7 @@ class ClipboardWayland(Clipboard):
         ).decode()
 
         run(
-            ["wl-copy", full_selection_str],
+            # `--` make coping entries with dashes possible
+            ["wl-copy", "--", full_selection_str],
             text=True,
         )

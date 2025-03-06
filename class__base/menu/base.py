@@ -26,7 +26,7 @@ class Menu:
         extra_prompts: list = [],
         error_message: str = "Could not get user selection!",
     ) -> str:
-        output = run(
+        result = run(
             self.main_prompt + [self.prompt_flag, prompt_name] + extra_prompts,
             text=True,
             input=entries,
@@ -34,14 +34,16 @@ class Menu:
             encoding="utf-8",
         )
 
-        if output.returncode:
+        print(result)
+
+        if result.returncode or (not result.stdout):
             sys.exit(
-                f"return_code: {output.returncode}\n"
-                + f"stderr: {output.stderr}\n"
+                f"return_code: {result.returncode}\n"
+                + f"stderr: {result.stderr}\n"
                 + f"error: {error_message}\n"
             )
 
-        return output.stdout.strip()
+        return result.stdout.strip()
 
     # -----------------
     # derived functions

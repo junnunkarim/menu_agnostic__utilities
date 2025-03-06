@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+# TODO: need to rewrite
+
 import os
 import sys
 import concurrent.futures
+import subprocess
 
-from subprocess import Popen
 from sys import argv
 from os import path
 from glob import glob
@@ -53,6 +55,7 @@ def process_file(file_path: Path) -> tuple[str, dict] | None:
             "comment": comment,
             "file_path": file_path,
         }
+
     return None
 
 
@@ -139,7 +142,7 @@ def run(menu: str, term: str, wm: str | None = None) -> None:
         desktop_entries[selection]["file_path"],
     ]
 
-    Popen(
+    subprocess.run(
         execute_cmd,
         start_new_session=True,
     )

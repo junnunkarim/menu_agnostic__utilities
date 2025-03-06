@@ -208,7 +208,7 @@ class ZkMenu:
 
             title = self._menu.get_selection(
                 entries=menu_entries_str,
-                prompt_name="New note title:",
+                prompt_name="New note title: ",
             )
 
             if title == menu_entries[0]:

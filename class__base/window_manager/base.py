@@ -114,7 +114,28 @@ class WindowManager:
         colorscheme: str,
         choose_wallpaper: bool = False,
         apply_wallpaper_functions: list[Callable] = [],
-    ) -> str:
+    ) -> tuple[str, str | None]:
+        scheme = None
+
+        if colorscheme == "matugen":
+            schemes = [
+                "Tonal-spot",
+                "Neutral",
+                "Fidelity",
+                "Content",
+                "Rainbow",
+                "Monochrome",
+                "Expressive",
+                "Fruit-salad",
+            ]
+
+            entries = "\n".join(schemes)
+            scheme = self.menu.get_selection(
+                entries,
+                prompt_name="Color Generation Scheme: ",
+            )
+            scheme = f"scheme-{scheme.lower()}"
+
         # choose a wallpaper
         if choose_wallpaper:
             selection = self.menu.get_confirmation(
@@ -134,7 +155,10 @@ class WindowManager:
         for func in apply_wallpaper_functions:
             func(wallpaper)
 
-        return wallpaper
+        if colorscheme == "matugen":
+            return wallpaper, scheme
+        else:
+            return wallpaper, scheme
 
     def _apply(
         self,
@@ -152,7 +176,7 @@ class WindowManager:
         elif colorscheme.startswith("[") and colorscheme.endswith("]"):
             sys.exit(f"'cancel' was chosen when prompted for choosing a colorscheme.\n")
 
-        wallpaper = self.apply_wallpaper(
+        wallpaper, matugen_scheme = self.apply_wallpaper(
             colorscheme,
             choose_wallpaper,
             apply_wallpaper_functions,
@@ -160,7 +184,7 @@ class WindowManager:
 
         # generate matugen colorscheme
         if colorscheme == "matugen":
-            matugen_gen_color(wallpaper)
+            matugen_gen_color(wallpaper, matugen_scheme)
 
         self.apply_colorscheme(colorscheme, manage_programs, allowed_programs)
 

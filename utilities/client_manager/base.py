@@ -23,7 +23,7 @@ def client_manager(menu: str, wm: str, only_minimize: bool) -> None:
         )
     elif menu == "fuzzel":
         menu_obj = Fuzzel(
-            width=80,
+            width=100,
             line=12,
         )
     else:

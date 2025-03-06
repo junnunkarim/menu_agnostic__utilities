@@ -7,7 +7,18 @@ from subprocess import run
 # ------------------------------
 # functions for color generation
 # ------------------------------
-def matugen_gen_color(wallpaper: str) -> str:
+def matugen_gen_color(wallpaper: str, scheme: str | None = None) -> str:
+    schemes = [
+        "scheme-tonal-spot",
+        "scheme-neutral",
+        "scheme-fidelity",
+        "scheme-content",
+        "scheme-rainbow",
+        "scheme-monochrome",
+        "scheme-expressive",
+        "scheme-fruit-salad",
+    ]
+
     wallpaper_path = Path("~/.config/wallpaper/" + wallpaper).expanduser()
 
     command = [
@@ -15,16 +26,13 @@ def matugen_gen_color(wallpaper: str) -> str:
         "image",
         "-j",
         "hex",
-        # "-t",
-        # "scheme-fruit-salad",
-        # "scheme-neutral",
-        # "scheme-fidelity",
-        # "scheme-content",
-        # "scheme-rainbow",
-        # "scheme-monochrome",
-        # "scheme-expressive",
-        wallpaper_path,
     ]
+
+    if (scheme is not None) and (scheme in schemes):
+        command.append("-t")
+        command.append(scheme)
+
+    command.append(str(wallpaper_path))
 
     # run the command
     output = run(command, start_new_session=True, text=True, check=True)

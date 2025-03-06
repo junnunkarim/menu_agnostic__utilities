@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 
 from class__main.menus.dmenu import Dmenu
 from class__main.menus.fuzzel import Fuzzel
+from class__main.menus.rofi import Rofi
 
 from class__main.bookmark_manager.buku import BukuMenu
 from class__main.bookmark_manager.bkmr import BkmrMenu
@@ -35,6 +36,10 @@ def bookmark_manager(
         menu_obj = Fuzzel(
             width=120,
             line=16,
+        )
+    elif menu == "rofi":
+        menu_obj = Rofi(
+            line=12,
         )
     else:
         sys.exit(f"Menu - '{menu}' is not recognized!")
@@ -72,7 +77,7 @@ def bookmark_manager(
 
 
 def main() -> None:
-    menus = ["dmenu", "fuzzel"]
+    menus = ["dmenu", "fuzzel", "rofi"]
     bk_clients = ["bkmr", "buku"]
     modes = ["online", "offline"]
 
