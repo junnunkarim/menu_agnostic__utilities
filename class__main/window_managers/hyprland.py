@@ -104,14 +104,14 @@ class Hyprland(WindowManager):
             start_concat='local color = "',
             end_concat='"',
             colorscheme_map={
-                "catppuccin_macchiato": "base16-catppuccin-macchiato",
-                "dracula": "base16-dracula",
+                "catppuccin_macchiato": "catppuccin-macchiato",
+                "dracula": "dracula",
                 "everblush": "everblush",
-                "everforest": "base16-everforest",
+                "everforest": "everforest",
                 "gruvbox": "base16-gruvbox-dark-medium",
                 "matugen": "matugen",
-                "nord": "base16-nord",
-                "rose_pine": "base16-rose-pine",
+                "nord": "nord",
+                "rose_pine": "rose-pine",
             },
         )
 
