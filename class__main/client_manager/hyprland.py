@@ -53,7 +53,7 @@ class HyprClientManager:
         # Build the state string; always showing three comma-separated symbols.
         state_str = f"{fullscreen_sym} {floating_sym} {minimized_sym}"
 
-        ws_name = self._format_workspace_name(workspace_name, 8)
+        ws_name = self._format_workspace_name(workspace_name, 10)
 
         # construct the final formatted string
         # return f"{state_str} {title} [{client_class}] [{address}]"

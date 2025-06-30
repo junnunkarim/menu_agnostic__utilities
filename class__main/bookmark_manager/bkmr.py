@@ -108,10 +108,10 @@ class BkmrMenu:
             self._format_output(
                 id=str(bookmark["id"]),
                 max_id=max_id,
-                url=bookmark["URL"],
-                metadata=bookmark["metadata"].replace("\n", ""),
-                description=bookmark["desc"],
-                tags=bookmark["tags"].strip(","),
+                url=bookmark["url"],
+                metadata=bookmark["title"].replace("\n", ""),
+                description=bookmark["description"],
+                tags=",".join(bookmark["tags"]),
             )
             for bookmark in bookmarks
         ]
